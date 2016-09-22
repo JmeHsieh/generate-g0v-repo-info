@@ -141,7 +141,6 @@ def commit_push(repo):
     logging.info('changed files:\n{}'.format('\n'.join([d.b_path for d in repo.index.diff('HEAD')])))
     logging.info('git commit -m "commit updates."')
     repo.index.commit('commit updates.')
-    commit('')
 
     logging.info('git push origin')
     repo.remote().push(repo.head)
