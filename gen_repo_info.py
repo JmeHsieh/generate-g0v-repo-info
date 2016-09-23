@@ -101,12 +101,18 @@ def get_repo_readmes(session, info_path, output_dir):
         if readme['encoding'] != 'base64':
             continue
 
-        content = b64decode(readme.get('content', '')).decode('utf-8')
         filename = '`'.join(fullname.split('/')) + '`' + readme['name']
+        repo.update({'readme_filename': filename})
+
+        content = b64decode(readme.get('content', '')).decode('utf-8')
         filepath = join(output_dir, filename)
         with open(filepath, 'w') as f:
             logging.info('write {}'.format(filename))
             f.write(content)
+
+    with open(info_path, 'w') as f:
+        logging.info('update readme filenames to repo_info.json')
+        json.dump(info, f, sort_keys=True, ensure_ascii=False, indent=2)
 
 
 def setup_bkrepo(repo_url, repo_path):
