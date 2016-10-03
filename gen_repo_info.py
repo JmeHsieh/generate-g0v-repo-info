@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
+
 from base64 import b64decode
-from git.repo.base import Repo
 import json
 import logging
 from os import listdir, makedirs
 from os.path import abspath, dirname, isfile, join
-from requests import get, Session
 from shutil import copy, rmtree
-from subprocess import Popen, PIPE
+from subprocess import PIPE, Popen
 from urllib.parse import urljoin, urlparse
+
+from git.repo.base import Repo
+from requests import get, Session
+
 
 REQUIRED_KEYS = ['name', 'description', 'url', 'html_url']
 logging.basicConfig(level=logging.DEBUG,
@@ -152,8 +155,7 @@ def commit_push(repo):
     repo.remote().push(repo.head)
 
 
-if __name__ == '__main__':
-
+def main():
     # prelude
     base_dir = dirname(abspath(__file__))
     data_dir = join(base_dir, 'data')
@@ -193,3 +195,7 @@ if __name__ == '__main__':
     # cleaning
     rmtree(awesome_dir)
     rmtree(temp_dir)
+
+
+if __name__ == '__main__':
+    main()
