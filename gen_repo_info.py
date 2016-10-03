@@ -120,13 +120,13 @@ def get_repo_readmes(session, info_path, output_dir):
 
 def setup_bkrepo(repo_url, repo_path):
     try:
-        logging.info('git pull: {}'.format(repo_url))
         repo = Repo(repo_path)
-        repo.remote().pull()
-    except:
-        logging.info('pull failure')
+    except FileNotFoundError:
         logging.info('git clone: {}'.format(repo_url))
         repo = Repo.clone_from(repo_url, repo_path)
+    else:
+        logging.info('git pull: {}'.format(repo_url))
+        repo.remote().pull()
     return repo
 
 
