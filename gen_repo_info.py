@@ -118,6 +118,33 @@ def get_repo_readmes(session, info_path, output_dir):
         json.dump(info, f, sort_keys=True, ensure_ascii=False, indent=2)
 
 
+def get_repo_g0vjsons(session, info_path, output_dir):
+    with open(info_path, 'r') as f:
+        info = json.load(f)
+
+    for fullname, repo in info.items():
+        response = session.get(urljoin(repo['url'] + '/', 'contents/g0v.json'))
+        if response.status_code // 100 != 2:
+            continue
+
+        g0vjson = response.json()
+        if g0vjson['encoding'] != 'base64':
+            continue
+
+        filename = '`'.join(fullname.split('/')) + '`' + 'g0v.json'
+        repo.update({'g0vjson_filename': filename})
+
+        content = b64decode(g0vjson.get('content', '')).decode('utf-8')
+        filepath = join(output_dir, filename)
+        with open(filepath, 'w') as f:
+            logging.info('write {}'.format(filename))
+            f.write(content)
+
+    with open(info_path, 'w') as f:
+        logging.info('update g0vjson filenames to repo_info.json')
+        json.dump(info, f, sort_keys=True, ensure_ascii=False, indent=2)
+
+
 def setup_bkrepo(repo_url, repo_path):
     try:
         repo = Repo(repo_path)
@@ -182,10 +209,11 @@ def main():
     s.headers.update({'Accept': 'application/vnd.github.v3+json'})
     s.headers.update({'Authorization': 'token %s' % authtoken})
 
-    # fetch repo info & repo readmes
+    # fetch repo stuff
     get_g0v_repos(s, info_path)
     get_awesome_repos(s, awesome_dir, info_path)
     get_repo_readmes(s, info_path, temp_dir)
+    get_repo_g0vjsons(s, info_path, temp_dir)
 
     # backup to bkrepo
     bkrepo = setup_bkrepo(bkrepo_url, bkrepo_dir)
