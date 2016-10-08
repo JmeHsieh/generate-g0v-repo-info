@@ -91,6 +91,21 @@ def get_awesome_repos(session, awesome_dir, info_path):
         json.dump(info, f, sort_keys=True, ensure_ascii=False, indent=2)
 
 
+def get_repo_languages(session, info_path):
+    with open(info_path, 'r') as f:
+        info = json.load(f)
+
+    for fullname, repo in info.items():
+        response = session.get(urljoin(repo['url'] + '/', 'languages'))
+        if response.status_code // 100 != 2:
+            continue
+        repo.update({'languages': response.json()})
+
+    with open(info_path, 'w') as f:
+        logging.info('update languages to repo_info.json')
+        json.dump(info, f, sort_keys=True, ensure_ascii=False, indent=2)
+
+
 def get_repo_readmes(session, info_path, output_dir):
     with open(info_path, 'r') as f:
         info = json.load(f)
@@ -212,6 +227,7 @@ def main():
     # fetch repo stuff
     get_g0v_repos(s, info_path)
     get_awesome_repos(s, awesome_dir, info_path)
+    get_repo_languages(s, info_path)
     get_repo_readmes(s, info_path, temp_dir)
     get_repo_g0vjsons(s, info_path, temp_dir)
 
