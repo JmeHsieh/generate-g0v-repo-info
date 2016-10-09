@@ -13,7 +13,7 @@ from git.repo.base import Repo
 from requests import get, Session
 
 
-REQUIRED_KEYS = ['name', 'description', 'url', 'html_url']
+REQUIRED_KEYS = ['name', 'description', 'url', 'html_url', 'updated_at']
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(message)s',
                     datefmt='%I:%M:%S %p')
