@@ -9,6 +9,7 @@ from shutil import copy, rmtree
 from subprocess import PIPE, Popen
 from urllib.parse import urljoin, urlparse
 
+from git import NoSuchPathError
 from git.repo.base import Repo
 from requests import get, Session
 
@@ -163,7 +164,7 @@ def get_repo_g0vjsons(session, info_path, output_dir):
 def setup_bkrepo(repo_url, repo_path):
     try:
         repo = Repo(repo_path)
-    except FileNotFoundError:
+    except NoSuchPathError:
         logging.info('git clone: {}'.format(repo_url))
         repo = Repo.clone_from(repo_url, repo_path)
     else:
