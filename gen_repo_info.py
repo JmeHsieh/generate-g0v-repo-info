@@ -201,7 +201,7 @@ def commit_push(repo):
 def main():
     # prelude
     base_dir = dirname(abspath(__file__))
-    data_dir = join(base_dir, 'data')
+    data_dir = join(base_dir, '_data')
 
     awesome_dir = join(data_dir, 'awesome')
     makedirs(awesome_dir, exist_ok=True)
